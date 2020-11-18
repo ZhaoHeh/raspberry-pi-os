@@ -32,6 +32,8 @@ void uart_init ( void )
 	unsigned int selector;
 
 	selector = get32(GPFSEL1);
+	// GPFSEL1定义在gpio.h中(PBASE+0x00200004), 实际值为  0x3F000000 + 0x00200004 = 0x3F200004
+	// 
 	selector &= ~(7<<12);                   // clean gpio14
 	selector |= 2<<12;                      // set alt5 for gpio14
 	selector &= ~(7<<15);                   // clean gpio15
