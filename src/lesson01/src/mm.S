@@ -11,5 +11,5 @@ memzero:
 	// ARM指令集中应该不存在b.gt
 	// 这里可能是想用bgt(Branch if Greater than), 例如 bgt s,t,label 表示如果s>t, 则branch到label所在的位置
 	// 同时根据https://www.keil.com/support/man/docs/armclang_mig/armclang_mig_chr1398243831925.htm
-	// bgt label 的格式也存在, 根据上一条指令修改的condition flag的值, 如果大于0就跳转到label
+	// bgt label 的格式也存在, 标志寄存器中Z标志位大于于零时, 跳转到label
 	ret
