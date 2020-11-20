@@ -20,6 +20,19 @@ char uart_recv ( void )
 	return(get32(AUX_MU_IO_REG)&0xFF);
 }
 
+/*
+    以上两个操作(即send和recv)仅涉及两个寄存器AUX_MU_LSR_REG和AUX_MU_IO_REG, 放在这里解释一下:
+	The AUX_MU_LSR_REG register:
+		Shows the data status. 该寄存器第0bit为1时, 表示receive FIFO保存了至少一个符号, 所以
+		get32(AUX_MU_LSR_REG)&0x01 == 1说明接收到数据了.; 该寄存第5bit为1时, 表示transmit FIFO
+		可以接受至少1byte的数据, 所以get32(AUX_MU_LSR_REG)&0x20 == 1说明可以发送了.
+	The AUX_MU_IO_REG register:
+		is primary used to write data to and read data from the UART FIFOs.
+		由此可见, 本进程能直接读写的寄存器AUX_MU_IO_REG并不是UART接受和发送数据的寄存器, 本进程通过
+		访问AUX_MU_IO_REG间接和"UART FIFOs"通信. 而我推测, Raspberry Pi的硬件走线就决定了GPIO的
+		pin14 和 pin15 可以与 UART FIFOs 相连, 相连的设置就在 GPFSEL1 里.
+*/
+
 void uart_send_string(char* str)
 {
 	for (int i = 0; str[i] != '\0'; i ++) {
@@ -49,6 +62,13 @@ void uart_init ( void )
 	put32(GPPUDCLK0,(1<<14)|(1<<15));
 	delay(150);
 	put32(GPPUDCLK0,0);
+
+    /*
+		It is also recommended that the correct GPIO function mode is selected before enabling the mini Uart.
+			-- from BCM2837-ARM-Peripherals.-.Revised.-.V2-1.pdf
+		
+		这句话提示我们, GPIO 之所以能和 UART 有联系, 很可能仅是树莓派主板的设计.
+	*/
 
 	put32(AUX_ENABLES,1);                   //Enable mini uart (this also enables access to it registers)
 	put32(AUX_MU_CNTL_REG,0);               //Disable auto flow control and disable receiver and transmitter (for now)
