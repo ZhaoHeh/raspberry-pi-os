@@ -33,7 +33,7 @@ void uart_init ( void )
 
 	selector = get32(GPFSEL1);
 	// GPFSEL1定义在gpio.h中(PBASE+0x00200004), 实际值为  0x3F000000 + 0x00200004 = 0x3F200004
-	// 获取地址GPFSEL1中的值并赋值给selector
+	// get32函数定义在utils.S中, 功能为获取地址GPFSEL1中的值并赋值给selector
 	selector &= ~(7<<12);                   // clean gpio14
 	// 位移位运算符是将数据看成二进制数, 对其进行向左或向右移动若干位的运算. 位移位运算符分为左移和右移两种, 均为双目运算符.
 	// 第一运算对象是移位对象, 第二个运算对象是所移的二进制位数
@@ -42,6 +42,7 @@ void uart_init ( void )
 	selector &= ~(7<<15);                   // clean gpio15
 	selector |= 2<<15;                      // set alt5 for gpio15
 	put32(GPFSEL1,selector);
+	// 将selector的值赋值给GPFSEL1地址处的外设的寄存器
 
 	put32(GPPUD,0);
 	delay(150);
