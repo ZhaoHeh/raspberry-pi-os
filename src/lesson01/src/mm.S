@@ -7,7 +7,7 @@ memzero:
 	// 作为源寄存器产生0，作为目标寄存器丢弃传入的数据
 	subs x1, x1, #8
 	// subs(sub加s后缀), 将x1减#8的结果赋值给x1, 并根据结果更新condition flags(可能是个标志寄存器)
-	b.gt memzero
+	bgt memzero
 	// ARM指令集中应该不存在b.gt
 	// 这里可能是想用bgt(Branch if Greater than), 例如 bgt s,t,label 表示如果s>t, 则branch到label所在的位置
 	// 同时根据https://www.keil.com/support/man/docs/armclang_mig/armclang_mig_chr1398243831925.htm
